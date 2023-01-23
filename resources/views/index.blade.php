@@ -41,9 +41,23 @@
                         </label>       
                     </div>
                     <div class="card-body">{{ $task->body }}</div>
+                    <div class="card-footer">
+                        <div class="clearfix">
+                            <span class="float-left">
+                                Пользователь: {{ $task->user_id }}
+                                <br>
+                                Дата: {{ date_format($task->created_at, 'd.m.Y H:i') }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endforeach
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-2">
+            {{ $tasks->links() }}
+        </div>
     </div>
 </div>
 </body>
