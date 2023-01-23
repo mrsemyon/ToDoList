@@ -65,6 +65,7 @@ class TaskController extends Controller
         $task = new Task();
         $task->user_id = rand(1, 4);
         $task->title = $request->input('title');
+        $task->done = ($request->input('done'))?'1':'0';
         $task->body = $request->input('body');
         $task->save();
         return redirect()->route('index')->with('success', 'Новый пост успешно создан');
@@ -108,8 +109,9 @@ class TaskController extends Controller
         $task->done = ($request->input('done'))?'1':'0';
         $task->body = $request->input('body');
         $task->update();
+        $tasks = Task::select('tasks.*', 'users.name as author');
         return redirect()
-            ->route('show', compact('id'))
+            ->route('index', compact('tasks'))
             ->with('success', 'Пост успешно отредактирован');
     }
 

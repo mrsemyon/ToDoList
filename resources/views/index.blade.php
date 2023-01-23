@@ -12,7 +12,7 @@
                             {{ $task->title }}
                         </label>       
                     </div>
-                    <div class="card-body">{{ $task->body }}</div>
+                    <div class="card-body">{{ Str::limit($task->body, 140) }}</div>
                     <div class="card-footer">
                         <div class="clearfix">
                             <span>
@@ -20,7 +20,8 @@
                                 <br>
                                 Дата: {{ date_format($task->created_at, 'd.m.Y H:i') }}
                             </span>
-                                <a href="{{ route('show', ['id' => $task->id]) }}" class="col-md-3 float-md-end btn btn-info float-right">Редактировать</a>      
+                                <a href="{{ route('show', ['id' => $task->id]) }}" class="col-md-3 float-md-end btn btn-info float-right">Просмотреть</a>
+                                <a href="{{ route('edit', ['id' => $task->id]) }}" class="col-md-3 me-2 float-md-end btn btn-info float-right">Редактировать</a>
                         </div>
                     </div>
                 </div>
