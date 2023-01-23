@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->nullable();
             $table->string('title', 100);
             $table->text('body');
+            $table->boolean('done');
             $table->timestamps();
             $table->foreign('user_id')
             ->references('id')
