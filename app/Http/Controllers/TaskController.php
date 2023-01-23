@@ -20,6 +20,30 @@ class TaskController extends Controller
             ->paginate(4);
         return view('index', compact('tasks'));
     }
+        
+    /**
+     * Show the form for searching a existing resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request) {
+        $search = $request->input('search', '');
+        $search = iconv_substr($search, 0, 64);
+        $search = preg_replace('#[^0-9a-zA-ZА-Яа-яёЁ]#u', ' ', $search);
+        $search = preg_replace('#\s+#u', ' ', $search);
+        if (empty($search)) {
+            return view('search');
+        }
+        $tasks = Task::select('tasks.*', 'users.name as author')
+            ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->where('tasks.title', 'like', '%'.$search.'%')
+            ->orWhere('tasks.body', 'like', '%'.$search.'%')
+            //->orWhere('tasks.name', 'like', '%'.$search.'%')
+            ->orderBy('tasks.created_at', 'desc')
+            ->paginate(4)
+            ->appends(['search' => $request->input('search')]);;
+        return view('search', compact('tasks'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -28,7 +52,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        return view('create');
     }
 
     /**
@@ -37,9 +61,13 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        $task = new Task();
+        $task->user_id = rand(1, 4);
+        $task->title = $request->input('title');
+        $task->body = $request->input('body');
+        $task->save();
+        return redirect()->route('index')->with('success', 'Новый пост успешно создан');
     }
 
     /**
@@ -50,7 +78,10 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::select('tasks.*', 'users.name as author')
+            ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->find($id);
+        return view('show', compact('task'));
     }
 
     /**
@@ -59,9 +90,9 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
+    public function edit($id) {
+        $task = Task::find($id);
+        return view('edit', compact('task'));
     }
 
     /**
@@ -71,9 +102,15 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, $id) {
+        $task = Task::find($id);
+        $task->title = $request->input('title');
+        $task->done = ($request->input('done'))?'1':'0';
+        $task->body = $request->input('body');
+        $task->update();
+        return redirect()
+            ->route('show', compact('id'))
+            ->with('success', 'Пост успешно отредактирован');
     }
 
     /**

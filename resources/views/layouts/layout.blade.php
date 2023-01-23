@@ -11,21 +11,33 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-info bg-opacity-25">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">ToDoList</a>
+            <a class="navbar-brand" href="/">ToDoList</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        Таски
+                        <a class="nav-link" href="/">Таски</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('create') }}">Создать задачу</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-md-auto">
                     <li class="nav-item">
-                        Логин
+                        <span class="m-2">Логин</span>
                     </li>
                 </ul>
+                <form class="row g-2" action="{{ route('search') }}" method="POST">
+                    <div class="col-auto">
+                        <input class="col-auto form-control mr-sm-2" type="search" name="search" placeholder="Найти задачу..." aria-label="Поиск">
+                    </div>
+                    <div class="col-auto">
+                        <button class="col-auto btn btn-outline-dark my-2 my-sm-0" type="submit">Поиск</button>
+                    </div>
+                    @csrf
+                </form>
             </div>
         </div>
     </nav>

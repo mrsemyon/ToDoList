@@ -1,9 +1,10 @@
 @extends('layouts.layout')
 
 @section('content')
-    <h1 class="mt-2 mb-3">Задачи</h1>
-    <div class="row">
-        @foreach ($tasks as $task)
+    <h1 class="mt-2 mb-3">Результаты поиска</h1>
+    @if (isset($tasks) && count($tasks))
+        <div class="row">
+            @foreach ($tasks as $task)
             <div class="col-6 mb-4">
                 <div class="card">
                     <div class="card-header">
@@ -15,21 +16,23 @@
                     <div class="card-body">{{ $task->body }}</div>
                     <div class="card-footer">
                         <div class="clearfix">
-                            <span>
+                            <span class="float-left">
                                 Пользователь: {{ $task->user_id }}
                                 <br>
                                 Дата: {{ date_format($task->created_at, 'd.m.Y H:i') }}
                             </span>
-                                <a href="{{ route('show', ['id' => $task->id]) }}" class="col-md-3 float-md-end btn btn-info float-right">Редактировать</a>      
                         </div>
                     </div>
                 </div>
             </div>
-        @endforeach
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-2">
-            {{ $tasks->links() }}
+            @endforeach
         </div>
-    </div>
+        <div class="row justify-content-center">
+            <div class="col-2">
+            {{ $tasks->links() }}
+            </div>
+        </div>
+    @else
+        <p>По вашему запросу ничего не найдено</p>
+    @endif
 @endsection
