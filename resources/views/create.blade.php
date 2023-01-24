@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.layout', ['title' => 'Добавить задачу'])
 
 @section('content')
     <h1 class="mt-2 mb-3">Добавить задачу</h1>

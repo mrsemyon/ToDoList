@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('layouts.layout', ['title' => $task->title])
 
 @section('content')
     <div class="row">

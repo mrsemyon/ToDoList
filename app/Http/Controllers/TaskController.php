@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 
 class TaskController extends Controller
@@ -62,7 +63,7 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
         $task = new Task();
         $task->user_id = rand(1, 4);
@@ -106,7 +107,7 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TaskRequest $request, $id)
     {
         $task = Task::find($id);
         $task->title = $request->input('title');

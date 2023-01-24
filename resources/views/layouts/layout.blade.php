@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ToDoList</title>
+    <title>{{ $title ?? 'ToDoList' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
 <body>
@@ -29,7 +29,7 @@
                         <span class="m-2">Логин</span>
                     </li>
                 </ul>
-                <form class="row g-2" action="{{ route('search') }}" method="POST">
+                <form class="row g-2" action="{{ route('search') }}">
                     <div class="col-auto">
                         <input class="col-auto form-control mr-sm-2" type="search" name="search" placeholder="Найти задачу..." aria-label="Поиск">
                     </div>
@@ -41,6 +41,20 @@
             </div>
         </div>
     </nav>
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success alert-dismissible m-4" role="alert">
+            {{ $message }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible m-4" role="alert">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="container mt-4">
         @yield('content')
     </div>
