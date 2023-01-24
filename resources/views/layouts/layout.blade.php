@@ -18,26 +18,41 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Задачи</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('create') }}">Создать задачу</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-md-auto">
-                    <li class="nav-item">
-                        <span class="m-2">Логин</span>
-                    </li>
-                </ul>
-                <form class="row g-2" action="{{ route('search') }}">
-                    <div class="col-auto">
-                        <input class="col-auto form-control mr-sm-2" type="search" name="search" placeholder="Найти задачу..." aria-label="Поиск">
-                    </div>
-                    <div class="col-auto">
-                        <button class="col-auto btn btn-outline-dark my-2 my-sm-0" type="submit">Поиск</button>
-                    </div>
+                <form class="d-flex" action="{{ route('search') }}">
+                    <input class="form-control me-2" type="search" aria-label="Search">
+                    <button class="btn btn-outline-info text-dark" type="submit">Найти</button>
                     @csrf
                 </form>
+                <ul class="d-flex navbar-nav">
+                    @guest
+                        @if (Route::has('login'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            </li>
+                        @endif
+                        @if (Route::has('register'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            </li>
+                        @endif
+                    @else
+                        <li class="nav-item">
+                            <span class="nav-link">{{ Auth::user()->name }}</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('logout') }}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }} <!-- ссылка выхода -->
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </li>
+                    @endguest
+                </ul>
             </div>
         </div>
     </nav>

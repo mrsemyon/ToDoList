@@ -25,3 +25,5 @@ Route::get('show/{id}', 'App\Http\Controllers\TaskController@show')->name('show'
 Route::get('edit/{id}', 'App\Http\Controllers\TaskController@edit')->name('edit');
 Route::patch('update/{id}', 'App\Http\Controllers\TaskController@update')->name('update');
 Route::delete('destroy/{id}', 'App\Http\Controllers\TaskController@destroy')->name('destroy');
+
+Auth::routes();
