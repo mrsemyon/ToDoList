@@ -26,7 +26,8 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $search = $request->input('search', '');
         $search = iconv_substr($search, 0, 64);
         $search = preg_replace('#[^0-9a-zA-ZА-Яа-яёЁ]#u', ' ', $search);
@@ -61,7 +62,8 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $task = new Task();
         $task->user_id = rand(1, 4);
         $task->title = $request->input('title');
@@ -91,7 +93,8 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) {
+    public function edit($id)
+    {
         $task = Task::find($id);
         return view('edit', compact('task'));
     }
@@ -103,7 +106,8 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $task = Task::find($id);
         $task->title = $request->input('title');
         $task->done = ($request->input('done'))?'1':'0';
@@ -123,6 +127,10 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $task = Task::findOrFail($id);
+        $task->delete();
+        return redirect()
+            ->route('index')
+            ->with('success', 'Пост был успешно удален');
     }
 }

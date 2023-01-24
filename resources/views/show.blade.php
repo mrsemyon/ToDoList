@@ -20,7 +20,13 @@
                             <br>
                             Дата: {{ date_format($task->created_at, 'd.m.Y H:i') }}
                         </span>
-                            <a href="{{ route('edit', ['id' => $task->id]) }}" class="col-md-3 float-md-end btn btn-info float-right">Редактировать</a>      
+                        <form action="{{ route('destroy', ['id' => $task->id]) }}"
+                            method="post" onsubmit="return confirm('Удалить этот пост?')" class="d-inline float-md-end ms-2">
+                            @csrf
+                            @method('DELETE')
+                            <input type="submit" class="btn btn-danger" value="Удалить">
+                        </form>
+                        <a href="{{ route('edit', ['id' => $task->id]) }}" class="col-md-3 float-md-end btn btn-info float-right">Редактировать</a>
                     </div>
                 </div>
             </div>
