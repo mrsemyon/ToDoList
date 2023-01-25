@@ -21,7 +21,7 @@
                                 Дата: {{ date_format($task->created_at, 'd.m.Y H:i') }}
                             </span>
                         @auth
-                            @if (auth()->id() == $task->user_id)
+                            @if (auth()->id() == $task->user_id || auth()->id() == 1)
                                 <form action="{{ route('destroy', ['id' => $task->id]) }}"
                                     method="post" onsubmit="return confirm('Удалить эту задачу?')" class="d-inline float-md-end ms-2">
                                     @csrf

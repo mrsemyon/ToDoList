@@ -6,11 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 
-
 class TaskController extends Controller
 {
     public function __construct() {
         $this->middleware('auth')->except('index', 'show', 'search');
+    }
+
+    private function checkRights(Task $task) {
+        //admin always has id = 1
+        return auth()->id() == $task->user_id || auth()->id() == 1;
     }
 
     /**
@@ -26,7 +30,7 @@ class TaskController extends Controller
             ->paginate(4);
         return view('index', compact('tasks'));
     }
-        
+
     /**
      * Show the form for searching a existing resource.
      *
@@ -102,7 +106,7 @@ class TaskController extends Controller
     public function edit($id)
     {
         $task = Task::find($id);
-        if (auth()->id() != $task->user_id) {
+        if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
                 ->withErrors('Вы можете редактировать только свои посты');
@@ -120,7 +124,7 @@ class TaskController extends Controller
     public function update(TaskRequest $request, $id)
     {
         $task = Task::find($id);
-        if (auth()->id() != $task->user_id) {
+        if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
                 ->withErrors('Вы можете редактировать только свои посты');
@@ -144,7 +148,7 @@ class TaskController extends Controller
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
-        if (auth()->id() != $task->user_id) {
+        if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
                 ->withErrors('Вы можете редактировать только свои посты');
