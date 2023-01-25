@@ -63,9 +63,9 @@
     @endif
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible m-4" role="alert">
-            <ul>
+            <ul class="list-group">
                 @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                    <li class="list-group-item list-group-item-danger">{{ $error }}</li>
                 @endforeach
             </ul>
         </div>

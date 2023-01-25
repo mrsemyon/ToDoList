@@ -18,12 +18,12 @@ Route::get('index', 'App\Http\Controllers\TaskController@index')->name('index');
 
 Route::match(['get', 'post'], 'search', 'App\Http\Controllers\TaskController@search')->name('search');
 
-Route::get('create', 'App\Http\Controllers\TaskController@create')->name('create');
-Route::post('store', 'App\Http\Controllers\TaskController@store')->name('store');
+Route::get('create', 'App\Http\Controllers\TaskController@create')->name('create')->middleware('auth');;
+Route::post('store', 'App\Http\Controllers\TaskController@store')->name('store')->middleware('auth');;
 
 Route::get('show/{id}', 'App\Http\Controllers\TaskController@show')->name('show');
-Route::get('edit/{id}', 'App\Http\Controllers\TaskController@edit')->name('edit');
-Route::patch('update/{id}', 'App\Http\Controllers\TaskController@update')->name('update');
-Route::delete('destroy/{id}', 'App\Http\Controllers\TaskController@destroy')->name('destroy');
+Route::get('edit/{id}', 'App\Http\Controllers\TaskController@edit')->name('edit')->middleware('auth');;
+Route::patch('update/{id}', 'App\Http\Controllers\TaskController@update')->name('update')->middleware('auth');;
+Route::delete('destroy/{id}', 'App\Http\Controllers\TaskController@destroy')->name('destroy')->middleware('auth');;
 
 Auth::routes();

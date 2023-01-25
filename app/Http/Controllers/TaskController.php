@@ -6,8 +6,13 @@ use Illuminate\Http\Request;
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 
+
 class TaskController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth')->except('index', 'show', 'search');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -66,7 +71,7 @@ class TaskController extends Controller
     public function store(TaskRequest $request)
     {
         $task = new Task();
-        $task->user_id = rand(1, 4);
+        $task->user_id = auth()->id();
         $task->title = $request->input('title');
         $task->done = ($request->input('done'))?'1':'0';
         $task->body = $request->input('body');
@@ -97,6 +102,11 @@ class TaskController extends Controller
     public function edit($id)
     {
         $task = Task::find($id);
+        if (auth()->id() != $task->user_id) {
+            return redirect()
+                ->route('index')
+                ->withErrors('Вы можете редактировать только свои посты');
+        }
         return view('edit', compact('task'));
     }
 
@@ -110,6 +120,11 @@ class TaskController extends Controller
     public function update(TaskRequest $request, $id)
     {
         $task = Task::find($id);
+        if (auth()->id() != $task->user_id) {
+            return redirect()
+                ->route('index')
+                ->withErrors('Вы можете редактировать только свои посты');
+        }
         $task->title = $request->input('title');
         $task->done = ($request->input('done'))?'1':'0';
         $task->body = $request->input('body');
@@ -129,6 +144,11 @@ class TaskController extends Controller
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
+        if (auth()->id() != $task->user_id) {
+            return redirect()
+                ->route('index')
+                ->withErrors('Вы можете редактировать только свои посты');
+        }
         $task->delete();
         return redirect()
             ->route('index')
