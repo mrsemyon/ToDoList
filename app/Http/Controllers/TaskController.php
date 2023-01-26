@@ -9,7 +9,7 @@ use App\Models\Task;
 class TaskController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth')->except('index', 'show', 'search');
+        $this->middleware('auth')->except('index', 'show', 'search', 'active', 'completed');
     }
 
     private function checkRights(Task $task) {
@@ -29,6 +29,26 @@ class TaskController extends Controller
             ->orderBy('tasks.created_at', 'desc')
             ->paginate(4);
         return view('index', compact('tasks'));
+    }
+
+    public function active()
+    {
+        $tasks = Task::select('tasks.*', 'users.name as author')
+            ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->orderBy('tasks.created_at', 'desc')
+            ->where('done', '=', 0)
+            ->paginate(4);
+        return view('active', compact('tasks'));
+    }
+
+    public function completed()
+    {
+        $tasks = Task::select('tasks.*', 'users.name as author')
+            ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->orderBy('tasks.created_at', 'desc')
+            ->where('done', '=', 1)
+            ->paginate(4);
+        return view('completed', compact('tasks'));
     }
 
     /**
