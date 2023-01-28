@@ -18,11 +18,15 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->nullable();
             $table->string('title', 100);
             $table->text('body');
-            $table->boolean('done')->default(1);
+            $table->integer('status')->unsigned()->nullable();
             $table->timestamps();
             $table->foreign('user_id')
             ->references('id')
             ->on('users')
+            ->nullOnDelete();
+            $table->foreign('status')
+            ->references('id')
+            ->on('statuses')
             ->nullOnDelete();
         });
     }

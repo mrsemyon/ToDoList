@@ -16,11 +16,18 @@ class TaskFactory extends Factory
      */
     public function definition()
     {
+        $statuses = [
+            'pending',
+            'in_developing',
+            'on_testing',
+            'on_checking',
+            'done'
+        ];
         return [
             'user_id' => rand(1, 4),
-            'title' => fake()->realText(rand(25, 30)),
-            'body' => fake()->realText(rand(200, 300)),
-            'done' => rand(0, 1),
+            'title' => fake()->realText(rand(10, 15)),
+            'body' => fake()->realText(rand(100, 150)),
+            'status' => rand(1, 5),
             'created_at' => fake()->dateTimeBetween('-60 days', '-30 days'),
             'updated_at' => fake()->dateTimeBetween('-20 days', '-1 days'),
         ];

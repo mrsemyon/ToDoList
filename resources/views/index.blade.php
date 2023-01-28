@@ -7,10 +7,10 @@
             <div class="col-6 mb-4">
                 <div class="card">
                     <div class="card-header">
-                        <input disabled class="form-check-input" type="checkbox" value="" id="flexCheckDefault" {{ ($task->done)?'checked':'' }}>
                         <label class="form-check-label" for="flexCheckDefault">
                             {{ $task->title }}
-                        </label>       
+                        </label>
+                        <span name="status" class="float-md-end">{{ $task->status }}</span>                 
                     </div>
                     <div class="card-body">{{ Str::limit($task->body, 140) }}</div>
                     <div class="card-footer">

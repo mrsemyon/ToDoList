@@ -24,8 +24,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::select('tasks.*', 'users.name as author')
+        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
             ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->orderBy('tasks.created_at', 'desc')
             ->paginate(4);
         return view('index', compact('tasks'));
@@ -33,20 +34,22 @@ class TaskController extends Controller
 
     public function active()
     {
-        $tasks = Task::select('tasks.*', 'users.name as author')
+        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
             ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->orderBy('tasks.created_at', 'desc')
-            ->where('done', '=', 0)
+            ->where('statuses.code', '!=', 'done')
             ->paginate(4);
         return view('active', compact('tasks'));
     }
 
     public function completed()
     {
-        $tasks = Task::select('tasks.*', 'users.name as author')
+        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
             ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->orderBy('tasks.created_at', 'desc')
-            ->where('done', '=', 1)
+            ->where('statuses.code', '=', 'done')
             ->paginate(4);
         return view('completed', compact('tasks'));
     }
@@ -111,8 +114,9 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::select('tasks.*', 'users.name as author')
+        $task = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
             ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->find($id);
         return view('show', compact('task'));
     }

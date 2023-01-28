@@ -15,10 +15,14 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UserTableSeeder::class);
-        $this->command->info('Таблица пользователей загружена данными!');
+        $this->command->info("Таблица пользователей загружена данными!\n");
 
+        $this->call(StatusTableSeeder::class);
+        $this->command->info("Таблица статусов задач загружена данными!\n");
+        
         $this->call(TaskTableSeeder::class);
-        $this->command->info('Таблица задач загружена данными!');
+        $this->command->info("Таблица задач загружена данными!\n");
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

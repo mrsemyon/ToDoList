@@ -5,10 +5,8 @@
         <div class="col-12">
             <div class="card mt-4 mb-4">
                 <div class="card-header">
-                    <input disabled class="form-check-input" type="checkbox" value="" id="flexCheckDefault" {{ ($task->done)?'checked':'' }}>
-                    <label class="form-check-label" for="flexCheckDefault">
-                        {{ $task->title }}
-                    </label>       
+                    <span>{{ $task->title }}</span>
+                    <span name="status" class="float-md-end">{{ $task->status }}</span>
                 </div>
                 <div class="card-body">
                     <p class="mt-3 mb-0">{{ $task->body }}</p>
