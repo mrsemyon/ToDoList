@@ -27,7 +27,7 @@ $statuses = [
 </div>
 @endif
 <div class="form-group">
-    <textarea name="body" class="mt-2 form-control" placeholder="Текст поста" rows="7" required>{{ old('body') ?? $post->body ?? '' }}</textarea>
+    <textarea name="body" class="mt-2 form-control" placeholder="Текст задачи" rows="7" required>{{ old('body') ?? $post->body ?? '' }}</textarea>
 </div>
 <div class="form-group">
     <button type="submit" class="mt-2 btn btn-info">Сохранить</button>

@@ -8,9 +8,9 @@ use App\Models\Task;
 
 class TaskController extends Controller
 {
-    public function __construct() {
-        $this->middleware('auth')->except('index', 'show', 'search', 'active', 'completed');
-    }
+    // public function __construct() {
+    //     $this->middleware('auth')->except('index', 'show', 'search', 'active', 'completed');
+    // }
 
     private function checkRights(Task $task) {
         //admin always has id = 1

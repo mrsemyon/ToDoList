@@ -13,19 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'App\Http\Controllers\TaskController@index')->name('index');
-Route::get('index', 'App\Http\Controllers\TaskController@index')->name('index');
-Route::get('active', 'App\Http\Controllers\TaskController@active')->name('active');
-Route::get('completed', 'App\Http\Controllers\TaskController@completed')->name('completed');
+Route::get('/', 'App\Http\Controllers\TaskController@index')->name('index')->middleware('auth');
+Route::get('index', 'App\Http\Controllers\TaskController@index')->name('index')->middleware('auth');
+Route::get('active', 'App\Http\Controllers\TaskController@active')->name('active')->middleware('auth');
+Route::get('completed', 'App\Http\Controllers\TaskController@completed')->name('completed')->middleware('auth');
 
-Route::match(['get', 'post'], 'search', 'App\Http\Controllers\TaskController@search')->name('search');
+Route::match(['get', 'post'], 'search', 'App\Http\Controllers\TaskController@search')->name('search')->middleware('auth');
 
-Route::get('create', 'App\Http\Controllers\TaskController@create')->name('create')->middleware('auth');;
-Route::post('store', 'App\Http\Controllers\TaskController@store')->name('store')->middleware('auth');;
+Route::get('create', 'App\Http\Controllers\TaskController@create')->name('create')->middleware('auth');
+Route::post('store', 'App\Http\Controllers\TaskController@store')->name('store')->middleware('auth');
 
-Route::get('show/{id}', 'App\Http\Controllers\TaskController@show')->name('show');
-Route::get('edit/{id}', 'App\Http\Controllers\TaskController@edit')->name('edit')->middleware('auth');;
-Route::patch('update/{id}', 'App\Http\Controllers\TaskController@update')->name('update')->middleware('auth');;
-Route::delete('destroy/{id}', 'App\Http\Controllers\TaskController@destroy')->name('destroy')->middleware('auth');;
+Route::get('show/{id}', 'App\Http\Controllers\TaskController@show')->name('show')->middleware('auth');
+Route::get('edit/{id}', 'App\Http\Controllers\TaskController@edit')->name('edit')->middleware('auth');
+Route::patch('update/{id}', 'App\Http\Controllers\TaskController@update')->name('update')->middleware('auth');
+Route::delete('destroy/{id}', 'App\Http\Controllers\TaskController@destroy')->name('destroy')->middleware('auth');
 
 Auth::routes();
