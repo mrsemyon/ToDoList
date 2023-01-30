@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
-    // public function __construct() {
-    //     $this->middleware('auth')->except('index', 'show', 'search', 'active', 'completed');
-    // }
 
     private function checkRights(Task $task) {
         //admin always has id = 1
@@ -24,34 +22,12 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
+        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.id as status_id')
             ->join('users', 'tasks.user_id', '=', 'users.id')
             ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->orderBy('tasks.created_at', 'desc')
             ->paginate(4);
         return view('index', compact('tasks'));
-    }
-
-    public function active()
-    {
-        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
-            ->join('users', 'tasks.user_id', '=', 'users.id')
-            ->join('statuses', 'tasks.status', '=', 'statuses.id')
-            ->orderBy('tasks.created_at', 'desc')
-            ->where('statuses.code', '!=', 'done')
-            ->paginate(4);
-        return view('active', compact('tasks'));
-    }
-
-    public function completed()
-    {
-        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
-            ->join('users', 'tasks.user_id', '=', 'users.id')
-            ->join('statuses', 'tasks.status', '=', 'statuses.id')
-            ->orderBy('tasks.created_at', 'desc')
-            ->where('statuses.code', '=', 'done')
-            ->paginate(4);
-        return view('completed', compact('tasks'));
     }
 
     /**
@@ -72,10 +48,9 @@ class TaskController extends Controller
             ->join('users', 'tasks.user_id', '=', 'users.id')
             ->where('tasks.title', 'like', '%'.$search.'%')
             ->orWhere('tasks.body', 'like', '%'.$search.'%')
-            //->orWhere('tasks.name', 'like', '%'.$search.'%')
             ->orderBy('tasks.created_at', 'desc')
             ->paginate(4)
-            ->appends(['search' => $request->input('search')]);;
+            ->appends(['search' => $request->input('search')]);
         return view('search', compact('tasks'));
     }
 
@@ -86,7 +61,9 @@ class TaskController extends Controller
      */
     public function create()
     {
-        return view('create');
+        $statuses = DB::table('statuses')->select()->get();
+        $statuses = $statuses->pluck('name', 'id')->toArray();
+        return view('create', compact('statuses'));
     }
 
     /**
@@ -100,7 +77,7 @@ class TaskController extends Controller
         $task = new Task();
         $task->user_id = auth()->id();
         $task->title = $request->input('title');
-        $task->done = ($request->input('done'))?'1':'0';
+        $task->status = $request->input('status');
         $task->body = $request->input('body');
         $task->save();
         return redirect()->route('index')->with('success', 'Новый пост успешно создан');
@@ -129,13 +106,15 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
+        $statuses = DB::table('statuses')->select()->get();
+        $statuses = $statuses->pluck('name', 'id')->toArray();
         $task = Task::find($id);
         if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
                 ->withErrors('Вы можете редактировать только свои посты');
         }
-        return view('edit', compact('task'));
+        return view('edit', ['task' => $task, 'statuses' => $statuses]);
     }
 
     /**
@@ -154,13 +133,13 @@ class TaskController extends Controller
                 ->withErrors('Вы можете редактировать только свои посты');
         }
         $task->title = $request->input('title');
-        $task->done = ($request->input('done'))?'1':'0';
+        $task->status = ($request->input('status'));
         $task->body = $request->input('body');
         $task->update();
         $tasks = Task::select('tasks.*', 'users.name as author');
         return redirect()
             ->route('index', compact('tasks'))
-            ->with('success', 'Пост успешно отредактирован');
+            ->with('success', 'Задача успешно отредактирована');
     }
 
     /**

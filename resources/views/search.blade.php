@@ -17,7 +17,7 @@
                     <div class="card-footer">
                         <div class="clearfix">
                             <span class="float-left">
-                                Пользователь: {{ $task->user_id }}
+                                Пользователь: {{ $task->author }}
                                 <br>
                                 Дата: {{ date_format($task->created_at, 'd.m.Y H:i') }}
                             </span>

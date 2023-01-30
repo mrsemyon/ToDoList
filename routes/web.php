@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'App\Http\Controllers\TaskController@index')->name('index')->middleware('auth');
-Route::get('index', 'App\Http\Controllers\TaskController@index')->name('index')->middleware('auth');
-Route::get('active', 'App\Http\Controllers\TaskController@active')->name('active')->middleware('auth');
-Route::get('completed', 'App\Http\Controllers\TaskController@completed')->name('completed')->middleware('auth');
 
 Route::match(['get', 'post'], 'search', 'App\Http\Controllers\TaskController@search')->name('search')->middleware('auth');
 
