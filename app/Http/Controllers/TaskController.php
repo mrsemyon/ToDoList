@@ -9,7 +9,24 @@ use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
+    /**
+     * List of valid task and project statuses.
+     *
+     * @var array
+     */
+    private $statuses;
 
+    public function __construct()
+    {
+        $statuses = DB::table('statuses')->select()->get();
+        $this->statuses = $statuses->pluck('name', 'id')->toArray();
+    }
+
+    /**
+     * List of valid task and project statuses.
+     *
+     * @var array
+     */
     private function checkRights(Task $task) {
         //admin always has id = 1
         return auth()->id() == $task->user_id || auth()->id() == 1;
@@ -27,7 +44,8 @@ class TaskController extends Controller
             ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->orderBy('tasks.created_at', 'desc')
             ->paginate(4);
-        return view('index', compact('tasks'));
+
+        return view('index', ['tasks' => $tasks, 'statuses' => $this->statuses]);
     }
 
     /**
@@ -42,16 +60,39 @@ class TaskController extends Controller
         $search = preg_replace('#[^0-9a-zA-ZА-Яа-яёЁ]#u', ' ', $search);
         $search = preg_replace('#\s+#u', ' ', $search);
         if (empty($search)) {
-            return view('search');
+            $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.id as status_id')
+                ->join('users', 'tasks.user_id', '=', 'users.id')
+                ->join('statuses', 'tasks.status', '=', 'statuses.id')
+                ->where('status', '=', $request->input('status'))
+                ->orderBy('tasks.created_at', 'desc')
+                ->paginate(4);
+            return view('search', ['tasks' => $tasks, 'statuses' => $this->statuses]);
         }
-        $tasks = Task::select('tasks.*', 'users.name as author')
+        $tasks = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.id as status_id')
             ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->join('statuses', 'tasks.status', '=', 'statuses.id')
             ->where('tasks.title', 'like', '%'.$search.'%')
+            ->where('status', '=', $request->input('status'))
             ->orWhere('tasks.body', 'like', '%'.$search.'%')
             ->orderBy('tasks.created_at', 'desc')
             ->paginate(4)
             ->appends(['search' => $request->input('search')]);
-        return view('search', compact('tasks'));
+        return view('search', ['tasks' => $tasks, 'statuses' => $this->statuses]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $task = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
+            ->join('users', 'tasks.user_id', '=', 'users.id')
+            ->join('statuses', 'tasks.status', '=', 'statuses.id')
+            ->find($id);
+        return view('show', ['task' => $task, 'statuses' => $this->statuses]);
     }
 
     /**
@@ -61,9 +102,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $statuses = DB::table('statuses')->select()->get();
-        $statuses = $statuses->pluck('name', 'id')->toArray();
-        return view('create', compact('statuses'));
+        return view('create');
     }
 
     /**
@@ -80,22 +119,7 @@ class TaskController extends Controller
         $task->status = $request->input('status');
         $task->body = $request->input('body');
         $task->save();
-        return redirect()->route('index')->with('success', 'Новый пост успешно создан');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $task = Task::select('tasks.*', 'users.name as author', 'statuses.name as status', 'statuses.code as status_code')
-            ->join('users', 'tasks.user_id', '=', 'users.id')
-            ->join('statuses', 'tasks.status', '=', 'statuses.id')
-            ->find($id);
-        return view('show', compact('task'));
+        return redirect()->route('index')->with('success', 'Новая задача успешно создана');
     }
 
     /**
@@ -106,15 +130,13 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $statuses = DB::table('statuses')->select()->get();
-        $statuses = $statuses->pluck('name', 'id')->toArray();
         $task = Task::find($id);
         if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
-                ->withErrors('Вы можете редактировать только свои посты');
+                ->withErrors('Вы можете редактировать только свои задачи');
         }
-        return view('edit', ['task' => $task, 'statuses' => $statuses]);
+        return view('edit', ['task' => $task, 'statuses' => $this->statuses]);
     }
 
     /**
@@ -130,7 +152,7 @@ class TaskController extends Controller
         if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
-                ->withErrors('Вы можете редактировать только свои посты');
+                ->withErrors('Вы можете редактировать только свои задачи');
         }
         $task->title = $request->input('title');
         $task->status = ($request->input('status'));
@@ -154,11 +176,11 @@ class TaskController extends Controller
         if (!$this->checkRights($task)) {
             return redirect()
                 ->route('index')
-                ->withErrors('Вы можете редактировать только свои посты');
+                ->withErrors('Вы можете удалять только свои задачи');
         }
         $task->delete();
         return redirect()
             ->route('index')
-            ->with('success', 'Пост был успешно удален');
+            ->with('success', 'Задача была успешно удалена');
     }
 }

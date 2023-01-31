@@ -23,8 +23,13 @@
                         </li>
                     </ul>
                     <form class="d-flex" action="{{ route('search') }}">
-                        <input name="search" class="form-control me-2" type="search" aria-label="Search">
-                        <button class="btn btn-outline-info text-dark" type="submit">Найти</button>
+                        <input name="search" class="form-group form-control m-1" type="search" aria-label="Search" placeholder="Поиск">
+                        <select name="status" class="form-group form-control m-1">
+                            @foreach ($statuses as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
+                        </select>
+                        <button class="form-group m-1 btn btn-outline-info text-dark" type="submit">Найти</button>
                         @csrf
                     </form>
                 @endif
